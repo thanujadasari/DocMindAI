@@ -1,28 +1,37 @@
 package com.docmind;
 import com.docmind.utils.PdfReaderUtil;
 import java.util.Scanner;
+import com.docmind.service.SearchService;
+import java.util.ArrayList;
+import com.docmind.model.PdfDocument;
+import com.docmind.service.PdfService;
 
 public class Main {
     public static void main(String[] args){
         System.out.println("Welcome to DocMind AI");
         String pdfPath = "src/main/resources/Community Connect Form.pdf.pdf";
-        String pdfText=PdfReaderUtil.readPdf(pdfPath);
+        PdfDocument document=
 
-        String[] lines=pdfText.split("\n");
+                PdfService.loadPdf(
+                        pdfPath,
+                        "Community Connect Form.pdf.pdf"
+                );
+
+        String[] lines=document.getText().split("\n");
 
         Scanner scanner= new Scanner(System.in);
         System.out.println("Enter a word to search:");
         String word=scanner.nextLine();
 
-        boolean found=false;
-        for(String line: lines){
-            if(line.toLowerCase().contains(word.toLowerCase())){
+        ArrayList<String> results=SearchService.searchWord(document.getText(),word);
+        if(results.isEmpty()){
+            System.out.println("word not found");
+        }else{
+            System.out.println("\nResults:");
+            for(String line: results){
                 System.out.println(line);
-                found=true;
             }
-        }
-        if(!found){
-            System.out.println("Word not found.");
+            System.out.println("\nTotal Occurence: "+ results.size());
         }
 
     scanner.close();
