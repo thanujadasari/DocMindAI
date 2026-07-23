@@ -20,8 +20,8 @@ public class PdfReaderUtil {
 
         }
         catch(IOException e){
+            e.printStackTrace();
             return null;
-
         }
     }
 }

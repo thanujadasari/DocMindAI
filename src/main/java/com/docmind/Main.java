@@ -20,8 +20,6 @@ public class Main {
                 pdfPath,
                 "Community Connect Form.pdf.pdf"
         );
-        System.out.println(document.getText());
-
 
         Scanner scanner = new Scanner(System.in);
 
@@ -29,19 +27,14 @@ public class Main {
 
         String question = scanner.nextLine();
 
-        ArrayList<String> keywords = QuestionService.extractKeywords(question);
-        ArrayList<String> results=SearchService.searchKeywords(document.getText(),keywords);
-        if(results.isEmpty()){
-            System.out.println("\nNo matching information found");
+        ArrayList<String> keywords =
+                QuestionService.extractKeywords(question);
 
-        }else{
-            System.out.println("\nRelevant Information:\n");
-            for(String line: results){
-                System.out.println(line);
-            }
-        }
+        String result =
+                SearchService.searchAnswer(document.getText(), keywords);
 
-
+        System.out.println("\nRelevant Information:\n");
+        System.out.println(result);
 
         scanner.close();
     }

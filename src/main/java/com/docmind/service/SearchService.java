@@ -1,30 +1,34 @@
 package com.docmind.service;
+
 import java.util.ArrayList;
 
 public class SearchService {
-    public static ArrayList<String> searchKeywords(String pdfText, ArrayList<String> keywords) {
+
+    public static String searchAnswer(String pdfText, ArrayList<String> keywords) {
+
         String[] lines = pdfText.split("\n");
 
-        ArrayList<String> results = new ArrayList<>();
+        for (int i = 0; i < lines.length; i++) {
 
-        for (String line : lines) {
+            String line = lines[i].toLowerCase();
 
             boolean allKeywordsFound = true;
 
             for (String keyword : keywords) {
-
-                if (!line.toLowerCase().contains(keyword.toLowerCase())) {
+                if (!line.contains(keyword.toLowerCase())) {
                     allKeywordsFound = false;
                     break;
                 }
             }
 
             if (allKeywordsFound) {
-                results.add(line);
+
+                if (i + 1 < lines.length) {
+                    return lines[i + 1];
+                }
             }
         }
 
-        return results;
+        return "Answer not found.";
     }
 }
-
