@@ -5,15 +5,18 @@ import com.docmind.repository.HistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 @Service
 public class HistoryService {
+
     private final HistoryRepository historyRepository;
 
-    public HistoryService(HistoryRepository historyRepository){
-        this.historyRepository=historyRepository;
+    public HistoryService(HistoryRepository historyRepository) {
+        this.historyRepository = historyRepository;
     }
 
     public void saveHistory(String question, String answer) {
+
         History history = new History(
                 question,
                 answer,
@@ -22,5 +25,4 @@ public class HistoryService {
 
         historyRepository.save(history);
     }
-    }
-
+}

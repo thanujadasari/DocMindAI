@@ -6,27 +6,34 @@ public class SearchService {
 
     public static String searchAnswer(String pdfText, ArrayList<String> keywords) {
 
-        String[] lines = pdfText.split("\n");
+        String[] lines = pdfText.split("\\r?\\n");
 
-        for (int i = 0; i < lines.length; i++) {
+        int maxMatches = 0;
+        String bestLine = "";
 
-            String line = lines[i].toLowerCase();
+        for (String line : lines) {
 
-            boolean allKeywordsFound = true;
+            int matches = 0;
+
+            String lowerLine = line.toLowerCase();
 
             for (String keyword : keywords) {
-                if (!line.contains(keyword.toLowerCase())) {
-                    allKeywordsFound = false;
-                    break;
+
+                if (lowerLine.contains(keyword.toLowerCase())) {
+                    matches++;
                 }
+
             }
 
-            if (allKeywordsFound) {
-
-                if (i + 1 < lines.length) {
-                    return lines[i + 1];
-                }
+            if (matches > maxMatches) {
+                maxMatches = matches;
+                bestLine = line;
             }
+
+        }
+
+        if (maxMatches > 0) {
+            return bestLine;
         }
 
         return "Answer not found.";
