@@ -3,27 +3,28 @@ package com.docmind.controller;
 import com.docmind.model.AnswerResponse;
 import com.docmind.model.PdfDocument;
 import com.docmind.service.FileStorageService;
+import com.docmind.service.GeminiService;
 import com.docmind.service.HistoryService;
 import com.docmind.service.PdfService;
-import com.docmind.service.QuestionService;
-import com.docmind.service.SearchService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
 
 @RestController
 public class PdfController {
 
     private final HistoryService historyService;
     private final FileStorageService fileStorageService;
+    private final GeminiService geminiService;
 
     public PdfController(HistoryService historyService,
-                         FileStorageService fileStorageService) {
+                         FileStorageService fileStorageService,
+                         GeminiService geminiService) {
 
         this.historyService = historyService;
         this.fileStorageService = fileStorageService;
+        this.geminiService = geminiService;
     }
 
     @PostMapping("/upload")
@@ -59,14 +60,13 @@ public class PdfController {
                 new File(pdfPath).getName()
         );
 
-        ArrayList<String> keywords =
-                QuestionService.extractKeywords(question);
-
-        String answer = SearchService.searchAnswer(
+        // Ask Gemini instead of keyword search
+        String answer = geminiService.askGemini(
                 document.getText(),
-                keywords
+                question
         );
 
+        // Save question & answer in database
         historyService.saveHistory(question, answer);
 
         return new AnswerResponse(question, answer);
