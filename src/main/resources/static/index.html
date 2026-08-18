@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocMind AI - PDF Question Answering System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="logo-text">DocMind <span class="logo-accent">AI</span></span>
+            </div>
+            <div class="nav-actions">
+                <button id="toggle-history-btn" class="btn btn-secondary btn-icon">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>View History</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Hero Header -->
+        <header class="hero-section">
+            <h1 class="hero-title">Intelligent Document Assistant</h1>
+            <p class="hero-subtitle">Upload any PDF document and ask questions to extract key insights instantly, powered by DocMind AI.</p>
+        </header>
+
+        <!-- Two Column Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Workspace (Upload and Ask) -->
+            <div class="workspace-area">
+                <!-- Step 1: Upload Card -->
+                <div class="card upload-card" id="upload-card-wrapper">
+                    <div class="card-header">
+                        <div class="step-badge">1</div>
+                        <h2 class="card-title">Upload your PDF</h2>
+                    </div>
+                    
+                    <div class="drop-zone" id="drop-zone">
+                        <input type="file" id="file-input" accept="application/pdf" class="file-input">
+                        <div class="drop-zone-content" id="drop-zone-default">
+                            <div class="upload-icon-wrapper">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                </svg>
+                            </div>
+                            <p class="drop-zone-text">Drag & drop your PDF here or <span class="browse-link">browse files</span></p>
+                            <p class="drop-zone-info">Supports PDF files up to 25MB</p>
+                        </div>
+                        
+                        <!-- File selected / Uploading state -->
+                        <div class="drop-zone-content hidden" id="drop-zone-active">
+                            <div class="file-details">
+                                <svg class="pdf-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9.5 6c0-.55.45-1 1-1h1c.55 0 1 .45 1 1v1c0 .55-.45 1-1 1h-1v2H9V9zm5.5 2c0 .55-.45 1-1 1h-1v-4h1c.55 0 1 .45 1 1v2zm-7 1H7V8h1v4zm5-1.5h-1v1h1v-1zm5-2.5h-2.5v5H17v-2h1.5v-1H17v-1h2.5V8zM14 9h-1v2h1V9z"/>
+                                </svg>
+                                <span class="file-name" id="selected-file-name">document.pdf</span>
+                                <span class="file-size" id="selected-file-size">0 KB</span>
+                            </div>
+                            
+                            <!-- Progress Container -->
+                            <div class="progress-container">
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-bar" id="upload-progress-bar"></div>
+                                </div>
+                                <div class="progress-meta">
+                                    <span id="upload-status-text">Uploading...</span>
+                                    <span id="upload-percentage">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Success state -->
+                        <div class="drop-zone-content hidden" id="drop-zone-success">
+                            <div class="success-icon-wrapper">
+                                <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                            <p class="success-title">PDF Processed Successfully!</p>
+                            <p class="success-filename" id="success-file-name">document.pdf</p>
+                            <button id="reupload-btn" class="btn btn-link">Upload different file</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Ask Card -->
+                <div class="card ask-card disabled" id="ask-card-wrapper">
+                    <div class="card-header">
+                        <div class="step-badge">2</div>
+                        <h2 class="card-title">Ask a question</h2>
+                    </div>
+                    
+                    <form id="ask-form" class="ask-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="question-input" placeholder="Type your question about the uploaded document..." disabled autocomplete="off">
+                            <button type="submit" id="ask-btn" class="btn btn-primary" disabled>
+                                <span>Ask</span>
+                                <svg class="btn-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Loading Spinner -->
+                    <div class="loading-wrapper hidden" id="loading-spinner">
+                        <div class="spinner"></div>
+                        <p class="loading-text">Analyzing document and extracting answer...</p>
+                    </div>
+
+                    <!-- Answer Section -->
+                    <div class="answer-container hidden" id="answer-card">
+                        <div class="answer-header">
+                            <div class="answer-title-group">
+                                <svg class="answer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                <h3>DocMind Answer</h3>
+                            </div>
+                            <button id="copy-btn" class="btn btn-secondary btn-sm btn-icon" title="Copy to Clipboard">
+                                <svg class="icon copy-normal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                <svg class="icon copy-success hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span id="copy-text">Copy</span>
+                            </button>
+                        </div>
+                        <div class="answer-body">
+                            <p class="question-preview" id="display-question"></p>
+                            <div class="answer-text" id="display-answer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Workspace (History Sidebar - desktop visible by default, mobile absolute drawer) -->
+            <div class="history-sidebar" id="history-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title-group">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h2>Question History</h2>
+                    </div>
+                    <button id="close-history-btn" class="btn-close" aria-label="Close sidebar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="sidebar-search">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" id="history-search" placeholder="Search history...">
+                    </div>
+                </div>
+
+                <div class="history-list-container">
+                    <ul class="history-list" id="history-list">
+                        <!-- History items will be dynamically injected here -->
+                    </ul>
+                    <div class="history-empty" id="history-empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <p>No questions asked yet.</p>
+                        <span>Your history will show up here after asking a question.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Overlay backdrop for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 DocMind AI. All rights reserved. Designed for intelligent document search.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
