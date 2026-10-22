@@ -4,10 +4,12 @@ import com.docmind.model.AnswerResponse;
 import com.docmind.model.PdfDocument;
 import com.docmind.service.FileStorageService;
 import com.docmind.service.GeminiService;
+import com.docmind.service.OllamaService;
 import com.docmind.service.HistoryService;
 import com.docmind.service.PdfService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.File;
 
@@ -16,17 +18,17 @@ public class PdfController {
 
     private final HistoryService historyService;
     private final FileStorageService fileStorageService;
-    private final GeminiService geminiService;
+    private final OllamaService ollamaService;
 
     public PdfController(
-            HistoryService historyService,
-            FileStorageService fileStorageService,
-            GeminiService geminiService) {
+        HistoryService historyService,
+        FileStorageService fileStorageService,
+        OllamaService ollamaService) {
 
-        this.historyService = historyService;
-        this.fileStorageService = fileStorageService;
-        this.geminiService = geminiService;
-    }
+    this.historyService = historyService;
+    this.fileStorageService = fileStorageService;
+    this.ollamaService = ollamaService;
+}
 
     @PostMapping("/upload")
     public String uploadPdf(@RequestParam("file") MultipartFile file) {
@@ -74,14 +76,14 @@ public class PdfController {
 
             System.out.println("PDF text length: " + pdfText.length());
 
-            System.out.println("Calling Gemini...");
+            System.out.println("Calling Ollama...");
 
-            String answer = geminiService.askGemini(
-                    pdfText,
-                    question
-            );
+            String answer = ollamaService.askOllama(
+        pdfText,
+        question
+                );
 
-            System.out.println("Gemini response received.");
+            System.out.println("Ollama response received.");
 
             // Temporarily save history after Gemini succeeds
             historyService.saveHistory(question, answer);
