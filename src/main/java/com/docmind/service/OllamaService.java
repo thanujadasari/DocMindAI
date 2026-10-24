@@ -18,19 +18,26 @@ public class OllamaService {
     public String askOllama(String pdfText, String question) {
 
         String prompt = """
-                You are an AI assistant.
+                You are a helpful AI assistant in a PDF question-answering system.
 
-                Answer the user's question ONLY using
-                the following PDF content.
+                Follow these rules carefully:
 
-                If the answer is not present in the PDF, say:
-                "The answer is not available in the uploaded PDF."
+                1. Check whether the retrieved PDF content answers the question.
+                2. If the answer is present, answer using only information
+                   supported by the retrieved PDF content.
+                3. Do not add unsupported facts or assumptions.
+                4. If the answer is not present, say:
+                   "The answer is not available in the retrieved PDF content."
+                5. Do not guess or invent information.
+                6. Answer in simple, clear English.
 
-                PDF Content:
+                Retrieved PDF Content:
                 %s
 
-                Question:
+                User Question:
                 %s
+
+                Answer:
                 """.formatted(pdfText, question);
 
         Map<String, Object> body = Map.of(

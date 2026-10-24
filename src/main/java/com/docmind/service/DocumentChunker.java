@@ -23,17 +23,34 @@ public class DocumentChunker {
 
             int end = Math.min(start + CHUNK_SIZE, text.length());
 
+            // Try to split at a sentence or word boundary.
+            if (end < text.length()) {
+
+                int sentenceEnd = text.lastIndexOf(". ", end);
+
+                if (sentenceEnd > start + CHUNK_SIZE / 2) {
+                    end = sentenceEnd + 1;
+                } else {
+                    int wordEnd = text.lastIndexOf(' ', end);
+
+                    if (wordEnd > start + CHUNK_SIZE / 2) {
+                        end = wordEnd;
+                    }
+                }
+            }
+
             String chunk = text.substring(start, end).trim();
 
             if (!chunk.isEmpty()) {
                 chunks.add(chunk);
             }
 
-            if (end == text.length()) {
+            if (end >= text.length()) {
                 break;
             }
 
-            start = end - CHUNK_OVERLAP;
+            // Move forward while retaining overlap.
+            start = Math.max(start + 1, end - CHUNK_OVERLAP);
         }
 
         return chunks;

@@ -90,7 +90,7 @@ public class ChromaService {
                 .block();
     }
 
-    // Search ChromaDB for similar PDF chunks
+    // Search for similar PDF chunks and return their distances
     public String searchSimilarChunks(
             float[] questionEmbedding,
             int numberOfResults) {
@@ -104,6 +104,10 @@ public class ChromaService {
         Map<String, Object> request = new HashMap<>();
         request.put("query_embeddings", List.of(vector));
         request.put("n_results", numberOfResults);
+
+        // Request distances along with IDs and document text
+        request.put("include",
+                List.of("documents", "distances", "metadatas"));
 
         return webClient.post()
                 .uri("/api/v2/tenants/default_tenant/databases/default_database/collections/"
